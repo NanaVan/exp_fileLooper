@@ -1,0 +1,22 @@
+# Config file for the multiprocessing looper script for .data
+
+[paths]
+monitor_dir = "/mnt/nas84/puyuan_data/8007_TestMode_25-11-27_16-39-05/"
+output_dir = "/data/puyuan_data/8007_TestMode_25-11-27_16-39-05/"
+state_file = "./processed_puyuan_data_files.pkl"
+
+[processing]
+num_cores = 10
+interval_seconds = 0.5
+file_ready_seconds = 2
+approx_file_size_mb = 500
+
+[analysis]
+iq_per_frame = 262144 # iq pair number for one frame
+n_average = 8 # average number for one frame
+
+todo = [ 'png_spectrum', 'png_spectrogram', 'data_spectrum', 'data_spectrogram'] # choose any of or combination 'png_spectrum', 'data_spectrum', 'png_spectrogram', 'data_spectrogram'
+# 'png_spectrum': saving .png figure for averaged spectrum for one data file
+# 'png_spectrogram': saving .png figure for waterfall spectrogram for one data file
+# 'data_spectrum': saving .npz data for averaged spectrum for one data file
+# 'data_spectrogram': saving .npz data for waterfall spectrogram for one data file
