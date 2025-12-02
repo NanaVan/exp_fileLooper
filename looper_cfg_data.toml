@@ -6,7 +6,7 @@ output_dir = "/data/puyuan_data/8007_TestMode_25-11-27_16-39-05/"
 state_file = "./processed_puyuan_data_files.pkl"
 
 [processing]
-file_type = '.data'  # '.data' for puyuan devices' files, '.tiq' or '.TIQ' for the Tektronix files
+file_type = '.data'  # '.data' for puyuan devices' files, '.tiq' for the Tektronix files
 num_cores = 10
 interval_seconds = 0.5
 file_ready_seconds = 2
