@@ -32,7 +32,7 @@ def read_and_verify_settings(toml_file):
                 "monitor_dir",
                 "state_file",
             ],
-            "processing": ["num_cores", "interval_seconds", "file_ready_seconds"],
+            "processing": ["file_type", "num_cores", "interval_seconds", "file_ready_seconds"],
             "analysis": ["iq_per_frame", "n_average", "todo"],
         }
 
@@ -161,11 +161,12 @@ def monitor_directory(settings):
     monitor_dir = settings["paths"]["monitor_dir"]
     num_cores = settings["processing"]["num_cores"]
     interval_seconds = settings["processing"]["interval_seconds"]
+    file_type = settings["processing"]["file_type"]
 
     load_processed_files(state_file)  # Load state at startup
     try:
         while True:
-            files = [f for f in os.listdir(monitor_dir) if f.lower().endswith(".tdms")]
+            files = [f for f in os.listdir(monitor_dir) if f.lower().endswith(file_type)]
             unprocessed_files = [f for f in files if f not in PROCESSED_FILES]
 
             # Check for files that are ready to process
