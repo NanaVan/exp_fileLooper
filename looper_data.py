@@ -86,6 +86,8 @@ def is_file_ready(filepath, settings):
     check_interval = settings["processing"]["file_ready_seconds"]
 
     prev_size = -1
+    transfered_size = - 1
+    loop_time = 0
     while True:
         try:
             current_size = os.path.getsize(filepath)
@@ -100,8 +102,16 @@ def is_file_ready(filepath, settings):
                 return True
             else:
                 prev_size = current_size
+        elif transfered_size == current_size:
+            if loop_time == 20:
+                print("file {:} is transferred completed!".format(Path(filepath).stem))
+                return True
+            loop_time += 1
+        else:
+            pass
         time.sleep(check_interval)
         print("file {:} is waiting to transfer completed! (file size: {:.2f} MB)".format(Path(filepath).stem, current_size/1024/1024))
+        transfered_size = current_size
 
 
 # Process the file
