@@ -6,6 +6,7 @@
 #
 
 import os, time, multiprocessing, pickle, tomli, argparse
+from pathlib import Path
 from loguru import logger
 from functools import partial
 from preprocessing import Preprocessing
@@ -211,3 +212,13 @@ def main():
         level="INFO",
         rotation="1 MB",
     )
+
+    # Load settings from the provided TOML file
+    settings = read_and_verify_settings(args.config)
+    monitor_directory(settings)
+
+
+# ----------------------------
+
+if __name__ == '__main__':
+    main()
