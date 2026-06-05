@@ -124,10 +124,15 @@ def process_file(filename, settings):
 
     start_time = time.time()
 
-    bud = Preprocessing(monitor_dir + filename)
+    bud = Preprocessing(monitor_dir + filename, puyuan_new=True, abs_trigger=False)
     x_frequency, y_time, z_psd_array, _ = psd_array_welch(bud, offset=0, window_length=win_len, n_average=n_average, overlap_ratio=0, n_frame=-1, n_hop=0, padding_ratio=0, window='kaiser', beta=14)
     if 'data_spectrogram' in todo:
-        np.savez(output_dir + filename + "_spectrogram.npz", x_frequency + bud.center_frequency, y_time, z_psd_array)
+        # add timestamp if timestamp exists
+        try:
+            triggerTimes = np.array(bud.trigger_timestamp) * bud.data_len / bud.sampling_rate * 1e3
+            np.savez(output_dir + filename + "_spectrogram.npz", x_frequency + bud.center_frequency, y_time, z_psd_array, triggerTimes)
+        except:
+            np.savez(output_dir + filename + "_spectrogram.npz", x_frequency + bud.center_frequency, y_time, z_psd_array)
     if 'png_spectrogram' in todo:
         norm = colors.LogNorm(vmin=z_psd_array.min(), vmax=z_psd_array.max())
         fig, ax = plt.subplots(figsize=(12,10))
@@ -136,6 +141,13 @@ def process_file(filename, settings):
                     y_time * 1e3, # [ms]
                     z_psd_array,
                     shading = 'flat', cmap = 'viridis', norm = norm)
+        # add timestamp if timestamp exists
+        try: 
+            for timestamp_number in bud.trigger_timestamp:
+                y_triggerTime = timestamp_number * bud.data_len / bud.sampling_rate * 1e3 # [ms]
+                ax.plot([x_frequency[0]*1e-3, x_frequency[-1]*1e-3], [y_triggerTime, y_triggerTime], lw=1, ls=(0,(5,5)), alpha=0.6, color='darkorange')
+        except:
+            pass
         ax.set_title('Waterfall Plot | File: {:},\nRecording from {:}, duration: {:.3f} ms'.format(filename, bud.date_time.astype('datetime64[ms]'), bud.n_sample/bud.sampling_rate*1e3))
         ax.set_xlabel('Center frequency {:} MHz [kHz]'.format(bud.center_frequency*1e-6))
         ax.set_ylabel('Time [ms]')
