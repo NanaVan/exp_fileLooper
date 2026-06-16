@@ -14,20 +14,6 @@ import matplotlib.colors as colors
 
 from preprocessing import Preprocessing
 
-# --- 配置参数 ---
-SOURCE_DIR = 'C:/Users/van4w/Desktop/127La/8243_TestModePY82_26-04-07_22-12-25'      # 原始文件存放路径
-OUTPUT_DIR = 'C:/Users/van4w/Desktop/127La/8243_TestModePY82_26-04-07_22-12-25/file_cutInjection'   # 处理后生成文件的路径
-FILE_PREFIX = 'PY82ch1'
-EXPECTED_SIZE = 1024 * 1024 * 1024      # 原始文件固定大小, Bytes
-CHECK_INTERVAL = 0.5              # 检查频率, sec
-
-WIN_LEN = 262144                  # 频谱窗口长度
-N_AVER = 4                        # 单帧平均次数
-OVERLAPR = 0.60881                # 数据重叠率
-N_HOP = 250108                    # 单帧数据间隔
-TODO = ['data_spectrogram', 'data_spectrum', 'png_spectrogram', 'png_spectrum']
-
-
 
 def handle_windows(window_length, window=None, beta=None):
     '''
@@ -137,6 +123,7 @@ def file_cutInjection(input_file, output_dir, window_length, n_average, overlap_
     # 如果整个文件中都不存在触发信号，那么执行以下策略：1.前序文件含有触发信号，就将前序文件末尾的新注入数据与本文件可组成频谱的内容合并为新文件（incomplete），未组合成频谱部分放置于addition_data中；2.前序文件不含有触发信号，仅将前序文件addition_data中的数据与本文件可组成频谱的内容合并未新文件（incomplete），未组合成频谱部分放置于addition_data中。3.无前序文件（见于PY8*ch*_0.data），将本文件可组成频谱的内容合并为新文件（incomplete），未组合成频谱部分放置于addition_data中。
     if len(bud.trigger_timestamp) == 0:
         print('[!] 当前文件内无触发信号，将按普通频谱处理！')
+        ThisTriggerData_remain = bud.n_sample
         while True:
             if ThisTriggerData_remain > N:
                 x = np.hstack((additional_x, bud.load(N-lastTriggerData_remain, offset)[1]))
